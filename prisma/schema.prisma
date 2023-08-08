@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model products {
+  id Int @id @unique @default(autoincrement())
+  sku Int?
+  name String
+  price Int
+  weight Int?
+  descriptions String?
+  category String
+  stock Int
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("Products")
+}
+
+model categories {
+  id Int @id @unique @default(autoincrement())
+  name String
+  description String
+  createdAt DateTime  @default(now()) @map("created_at")      
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("Categories")
+}
+
+model orders {
+  id Int @id @unique @default(autoincrement())
+  customer_id Int @unique
+  customer customers @relation(fields: [customer_id], references: [id])
+  ammount Int
+  shipping_address String
+  order_address String
+  order_email String?
+  order_date DateTime?
+  order_status Boolean
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("Orders")
+}
+
+model customers {
+  id Int @id @unique @default(autoincrement())
+  email String @unique
+  password String @unique
+  role String @default("user")
+  full_name String
+  billing_address String 
+  default_shipping_address String? 
+  country String
+  phone Int
+  orders orders[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("Customers")
+}
+
